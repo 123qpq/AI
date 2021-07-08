@@ -34,22 +34,35 @@ def get_k_neighbors(user_id, rating_data, k):
     distance_data = np.append(distance_data, np.zeros((distance_data.shape[0], 1)), axis=1)
     
     for i in range(len(distance_data)):
-        if user_id == i:
-            distance_data[i, -1] = np.inf
-        else:
-            distance_data[i, -1] = distance(distance_data[i, :-1], distance_data[user_id, :-1])
-
+        row = distance_data[i]
+        
+        if i == user_id:  # 같은 유저면 거리를 무한대로 설정
+            row[-1] = np.inf
+        else:  # 다른 유저면 마지막 열에 거리 데이터를 저장
+            row[-1] = distance(distance_data[user_id][:-1], row[:-1])
+    
     # 데이터를 거리 열을 기준으로 정렬한다
     distance_data = distance_data[np.argsort(distance_data[:, -1])]
     
     # 가장 가까운 k개의 행만 리턴한다 + 마지막(거리) 열은 제외한다
     return distance_data[:k, :-1]
     
+def predict_user_rating(rating_data, k, user_id, movie_id,):
+    """예측 행렬에 따라 유저의 영화 평점 예측 값 구하기"""
+    # movie_id 번째 영화를 보지 않은 유저를 데이터에서 미리 제외시킨다
+    filtered_data = filter_users_without_movie(rating_data, movie_id)
+    # 빈값들이 채워진 새로운 행렬을 만든다
+    filled_data = fill_nan_with_user_mean(filtered_data)
+    # 유저 user_id와 비슷한 k개의 유저 데이터를 찾는다
+    neighbors = get_k_neighbors(user_id, filled_data, k)
+    
+    # 코드를 쓰세요
+    return np.mean(neighbors[:, movie_id])
+    
+    
+# 실행 코드   
+# 평점 데이터를 불러온다
+rating_data = pd.read_csv(RATING_DATA_PATH, index_col='user_id').values
+# 5개의 이웃들을 써서 유저 0의 영화 3에 대한 예측 평점 구하기
+predict_user_rating(rating_data, 5, 0, 3)  
 
-# 실행 코드
-# 영화 3을 본 유저들 중, 유저 0와 비슷한 유저 5명을 찾는다
-rating_data = pd.read_csv(RATING_DATA_PATH, index_col='user_id').values  # 평점 데이터를 불러온다
-filtered_data = filter_users_without_movie(rating_data, 3)  # 3 번째 영화를 보지 않은 유저를 데이터에서 미리 제외시킨다
-filled_data = fill_nan_with_user_mean(filtered_data)  # 빈값들이 채워진 새로운 행렬을 만든다
-user_0_neighbors = get_k_neighbors(0, filled_data, 5)  # 유저 0과 비슷한 5개의 유저 데이터를 찾는다
-user_0_neighbors
