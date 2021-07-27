@@ -21,7 +21,7 @@ cap = cv2.VideoCapture(0)
 while True:
     success, img = cap.read()
     if(success):
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         #img = cv2.resize(img, (int(img.shape[1] * scaler), int(img.shape[0] * scaler)))
         ori = img.copy()
 
@@ -33,6 +33,8 @@ while True:
         cv2.rectangle(img, (face.left(), face.top()), (face.right(), face.bottom()), (0, 255, 0), 5) #이미지, 시작점, 정료점, 색상, 선두께
         dlib_shape = predictor(img, face)
         shape_2d = np.array([[p.x, p.y] for p in dlib_shape.parts()])
+
+        center_x, center_y = np.mean(shape_2d, axis=0).astype(np.int)
         '''
         showpart = shape_2d[0][36:48]
         print(shape_2d)
@@ -41,7 +43,7 @@ while True:
         '''
         for s in shape_2d:
             cv2.circle(img, center=tuple(s), radius=1, color=(255, 255, 255), thickness = 2)
-
+        cv2.circle(img, center=tuple((center_x, center_y)), radius=1, color=(255, 0, 0), thickness=10, lineType=cv2.LINE_AA)
         cv2.imshow("video", img)
         cv2.waitKey(1)
         if cv2.waitKey(1) & 0xFF == ord('q'):
