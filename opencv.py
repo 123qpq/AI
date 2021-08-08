@@ -1,6 +1,7 @@
 import cv2
+import numpy as np
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('test.mp4')
 #cap = cv2.VideoCapture("resources/test_video.mp4")
 bgsubtract = cv2.createBackgroundSubtractorMOG2()
 cap.set(3,640)
@@ -19,7 +20,7 @@ while True:
             break
 
 
-'''
+
 net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg") 
 classes = [] 
 with open("coco.names", "r") as f: 
@@ -28,4 +29,3 @@ layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in 
 net.getUnconnectedOutLayers()] 
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
-'''

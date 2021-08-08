@@ -15,14 +15,14 @@ scaler = 0.3
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('test.mp4')
 
 
 while True:
     success, img = cap.read()
     if(success):
         #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        #img = cv2.resize(img, (int(img.shape[1] * scaler), int(img.shape[0] * scaler)))
+        img = cv2.resize(img, (int(img.shape[1] * scaler), int(img.shape[0] * scaler)))
         ori = img.copy()
 
         faces = detector(img)
